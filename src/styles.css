@@ -1,8 +1,7 @@
-
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/inter';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -21,6 +20,10 @@ body {
 }
 
 @theme inline {
+  /* My Custom Start */
+  --shadow-duo-zinc: 0 4px 0 theme(colors.zinc.900);
+  /* My Custom End */
+
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
