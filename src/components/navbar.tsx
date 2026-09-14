@@ -20,13 +20,7 @@ const NavbarHeader = ({ children }: { children: React.ReactNode }) => {
 }
 
 const NavbarNavigation = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <nav>
-      <Button variant="default" className="size-12 sm:w-48 sm:px-4 sm:py-2">
-        {children}
-      </Button>
-    </nav>
-  )
+  return <nav>{children}</nav>
 }
 
 export const Navbar = {

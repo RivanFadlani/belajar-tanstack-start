@@ -4,7 +4,7 @@ import { Button } from '#/components/ui/button'
 import { DropdownMenu } from '#/components/ui/dropdown-menu'
 import { Item } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: Home })
@@ -36,7 +36,16 @@ function Home() {
       <Navbar.Root>
         <Navbar.Header>Ripunn Notes</Navbar.Header>
         <Navbar.Navigation>
-          <Plus /> <span className="hidden sm:inline">Create Note</span>
+          <Button
+            variant="default"
+            nativeButton={false}
+            render={
+              <Link to="/create">
+                <Plus /> <span className="hidden sm:inline">Create Note</span>
+              </Link>
+            }
+            className="size-12 sm:w-48 sm:px-4 sm:py-2"
+          />
         </Navbar.Navigation>
       </Navbar.Root>
 

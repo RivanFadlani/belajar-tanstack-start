@@ -5,7 +5,7 @@ import { Field } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import { Separator } from '#/components/ui/separator'
 import { Textarea } from '#/components/ui/textarea'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 import { useState } from 'react'
 import z from 'zod'
@@ -48,7 +48,16 @@ function RouteComponent() {
       <Navbar.Root>
         <Navbar.Header>Create Note</Navbar.Header>
         <Navbar.Navigation>
-          <MoveLeft /> <span className="hidden sm:inline">Back</span>
+          <Button
+            variant="default"
+            nativeButton={false}
+            render={
+              <Link to="/">
+                <MoveLeft /> <span className="hidden sm:inline">Back</span>
+              </Link>
+            }
+            className="size-12 sm:w-48 sm:px-4 sm:py-2"
+          />
         </Navbar.Navigation>
       </Navbar.Root>
 
@@ -58,6 +67,9 @@ function RouteComponent() {
         <form onSubmit={handleSubmit}>
           <Field.Set>
             <Field.Group>
+              {/* errors.title awalnya ga punya data (object kosong -> undefined (thruty)), jadi === true */}
+              {/* lalu diberi double bang (!!) untuk ubah boolean menjadi ke nilai sebaliknya, jadi === false */}
+              {/* supaya awal form di-load, status field tidak langsung data-invalid='true' */}
               <Field.Root data-invalid={!!errors.title}>
                 <Field.Label htmlFor="title">Title</Field.Label>
                 <Input
