@@ -40,7 +40,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {/* Container Start */}
-        <div className="container mx-auto flex flex-col justify-center">
+        <div className="container mx-auto flex flex-col justify-center px-4">
           {children}
         </div>
         {/* Container End */}

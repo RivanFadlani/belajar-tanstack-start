@@ -3,7 +3,7 @@ import type React from 'react'
 
 const NavbarRoot = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="mx-auto my-6 box-border flex w-xs items-center justify-between rounded-2xl border-2 border-b-6 bg-zinc-100 p-4 sm:w-full">
+    <div className="mx-auto my-6 box-border flex w-full items-center justify-between rounded-2xl border-2 border-b-6 bg-zinc-100 p-4">
       {children}
     </div>
   )
