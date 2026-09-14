@@ -1,10 +1,11 @@
-import Navbar from '#/components/navbar'
+import Main from '#/components/layout/main'
+import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { DropdownMenu } from '#/components/ui/dropdown-menu'
 import { Item } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
 import { createFileRoute } from '@tanstack/react-router'
-import { EllipsisVertical, Eye, Pencil, Trash2Icon } from 'lucide-react'
+import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: Home })
 
@@ -31,10 +32,15 @@ const notes = [
 
 function Home() {
   return (
-    <div className="container mx-auto flex flex-col justify-center">
-      <Navbar />
+    <>
+      <Navbar.Root>
+        <Navbar.Header>Ripunn Notes</Navbar.Header>
+        <Navbar.Navigation>
+          <Plus /> <span className="hidden sm:inline">Create Note</span>
+        </Navbar.Navigation>
+      </Navbar.Root>
 
-      <main className="px-4">
+      <Main>
         <Separator className="mb-4" />
 
         <h1 className="mx-4 mb-4 font-sans text-xl font-medium uppercase">
@@ -79,7 +85,7 @@ function Home() {
             </Item.Root>
           ))}
         </div>
-      </main>
-    </div>
+      </Main>
+    </>
   )
 }

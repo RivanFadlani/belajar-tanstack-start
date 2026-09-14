@@ -39,7 +39,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        {/* Container Start */}
+        <div className="container mx-auto flex flex-col justify-center">
+          {children}
+        </div>
+        {/* Container End */}
+
         <TanStackDevtools
           config={{
             position: 'bottom-right',
