@@ -8,21 +8,39 @@ import { Textarea } from '#/components/ui/textarea'
 import { createFileRoute } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 import { useState } from 'react'
+import z from 'zod'
 
 export const Route = createFileRoute('/create')({
   component: RouteComponent,
 })
 
+const noteSchema = z.object({
+  title: z.string().min(1, { error: 'Title is required' }),
+  note: z.string().min(8, { error: 'Note minimal character is 8' }),
+})
+
+type Note = z.infer<typeof noteSchema>
+
+type FieldErrors = z.core.$ZodFlattenedError<Note>['fieldErrors']
+
 function RouteComponent() {
-  // Controlled Approach (state, onChange)
-  const [title, setTitle] = useState('')
-  const [note, setNote] = useState('')
+  // Uncontrolled Approach (formData, name)
+  const [errors, setErrors] = useState<FieldErrors>({})
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    console.log('Ini Title:', title)
-    console.log('Ini Note:', note)
+    const formData = new FormData(e.currentTarget)
+    const input = {
+      title: formData.get('title'),
+      note: formData.get('note'),
+    }
+
+    const result = noteSchema.safeParse(input)
+    if (!result.success) {
+      setErrors(z.flattenError(result.error).fieldErrors)
+      return
+    }
   }
 
   return (
@@ -40,27 +58,29 @@ function RouteComponent() {
         <form onSubmit={handleSubmit}>
           <Field.Set>
             <Field.Group>
-              <Field.Root>
+              <Field.Root data-invalid={!!errors.title}>
                 <Field.Label htmlFor="title">Title</Field.Label>
                 <Input
                   id="title"
+                  name="title"
                   type="text"
                   placeholder="Input a Title Here!"
                   className="bg-zinc-50 placeholder:text-zinc-400"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  aria-invalid={!!errors.title}
                 />
+                <Field.Error>{errors.title}</Field.Error>
               </Field.Root>
-              <Field.Root>
+              <Field.Root data-invalid={!!errors.note}>
                 <Field.Label htmlFor="note">Note</Field.Label>
                 <Textarea
                   id="note"
+                  name="note"
                   placeholder="Input Your Note Here!"
                   rows={5}
                   className="bg-zinc-50 placeholder:text-zinc-400"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
+                  aria-invalid={!!errors.note}
                 />
+                <Field.Error>{errors.note}</Field.Error>
               </Field.Root>
             </Field.Group>
           </Field.Set>
