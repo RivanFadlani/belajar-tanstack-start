@@ -50,7 +50,7 @@ const NoteForm = ({
         </Field.Group>
       </Field.Set>
       <Button type="submit" variant="outline" className="mt-6 w-full">
-        Create
+        {datas?.title ? 'Update Note' : 'Create Note'}
       </Button>
     </form>
   )

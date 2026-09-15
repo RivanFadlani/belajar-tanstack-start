@@ -31,6 +31,9 @@ function RouteComponent() {
       setErrors(z.flattenError(result.error).fieldErrors)
       return
     }
+
+    console.log(input.title)
+    console.log(input.note)
   }
 
   return (
@@ -58,8 +61,8 @@ function RouteComponent() {
           onSubmit={handleSubmit}
           errors={errors}
           datas={{
-            title: 'This is a title',
-            note: 'This is a Note. You can fill this textarea with your ideas!',
+            title: '',
+            note: '',
           }}
         />
       </Main>
