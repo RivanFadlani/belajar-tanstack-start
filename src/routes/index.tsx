@@ -61,10 +61,20 @@ function Home() {
                 <Item.Description>{note.note}</Item.Description>
               </Item.Content>
               <Item.Actions>
-                <Button variant="outline" size="sm">
-                  <Eye />
-                  View
-                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={
+                    <Link
+                      to="/view/$noteId"
+                      params={{ noteId: note.id.toString() }}
+                    >
+                      <Eye />
+                      View
+                    </Link>
+                  }
+                ></Button>
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger
                     render={

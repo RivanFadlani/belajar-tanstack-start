@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as EditNoteIdRouteImport } from './routes/edit.$noteId'
+import { Route as ViewNoteIdRouteImport } from './routes/view.$noteId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const EditNoteIdRoute = EditNoteIdRouteImport.update({
   path: '/edit/$noteId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ViewNoteIdRoute = ViewNoteIdRouteImport.update({
+  id: '/view/$noteId',
+  path: '/view/$noteId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/edit/$noteId': typeof EditNoteIdRoute
+  '/view/$noteId': typeof ViewNoteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/edit/$noteId': typeof EditNoteIdRoute
+  '/view/$noteId': typeof ViewNoteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/edit/$noteId': typeof EditNoteIdRoute
+  '/view/$noteId': typeof ViewNoteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/edit/$noteId'
+  fullPaths: '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/edit/$noteId'
-  id: '__root__' | '/' | '/create' | '/edit/$noteId'
+  to: '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
+  id: '__root__' | '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
   EditNoteIdRoute: typeof EditNoteIdRoute
+  ViewNoteIdRoute: typeof ViewNoteIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditNoteIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/view/$noteId': {
+      id: '/view/$noteId'
+      path: '/view/$noteId'
+      fullPath: '/view/$noteId'
+      preLoaderRoute: typeof ViewNoteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
   EditNoteIdRoute: EditNoteIdRoute,
+  ViewNoteIdRoute: ViewNoteIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
