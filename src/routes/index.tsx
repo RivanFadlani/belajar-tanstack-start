@@ -13,20 +13,17 @@ const notes = [
   {
     id: 1234,
     title: 'Belajar Tanstack Start',
-    description:
-      "Hari ini aku belajar 'Tanstack Start'. Tapi tidak hanya itu, aku juga belajar Design Pattern yaitu 'Compound Component' menggunakan shadcn/ui",
+    note: "Hari ini aku belajar 'Tanstack Start'. Tapi tidak hanya itu, aku juga belajar Design Pattern yaitu 'Compound Component' menggunakan shadcn/ui",
   },
   {
     id: 1235,
     title: 'Belajar NextJS',
-    description:
-      "Hari ini aku belajar 'NextJS'. Tapi tidak hanya itu, aku juga belajar menggunakan shadcn/ui untuk mempercepat merancang UI",
+    note: "Hari ini aku belajar 'NextJS'. Tapi tidak hanya itu, aku juga belajar menggunakan shadcn/ui untuk mempercepat merancang UI",
   },
   {
     id: 1236,
     title: 'Belajar TypeScript',
-    description:
-      "Hari ini aku belajar 'TypeScript'. Tapi tidak hanya itu, aku juga belajar Zod untuk melakukan validasi pada saat runtime",
+    note: "Hari ini aku belajar 'TypeScript'. Tapi tidak hanya itu, aku juga belajar Zod untuk melakukan validasi pada saat runtime",
   },
 ]
 
@@ -61,7 +58,7 @@ function Home() {
             <Item.Root variant="outline" className="mx-auto w-full">
               <Item.Content key={note.id}>
                 <Item.Title>{note.title}</Item.Title>
-                <Item.Description>{note.description}</Item.Description>
+                <Item.Description>{note.note}</Item.Description>
               </Item.Content>
               <Item.Actions>
                 <Button variant="outline" size="sm">
@@ -80,9 +77,16 @@ function Home() {
                     <menu>
                       <DropdownMenu.Group>
                         <DropdownMenu.Label>Actions</DropdownMenu.Label>
-                        <DropdownMenu.Item>
-                          <Pencil /> Edit
-                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          render={
+                            <Link
+                              to="/edit/$noteId"
+                              params={{ noteId: note.id.toString() }}
+                            >
+                              <Pencil /> Edit
+                            </Link>
+                          }
+                        ></DropdownMenu.Item>
                         <DropdownMenu.Item variant="destructive">
                           <Trash2Icon /> Delete
                         </DropdownMenu.Item>
