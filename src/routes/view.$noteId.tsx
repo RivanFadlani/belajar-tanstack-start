@@ -2,6 +2,7 @@ import Main from '#/components/layout/main'
 import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
+import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 
@@ -11,6 +12,7 @@ export const Route = createFileRoute('/view/$noteId')({
 
 function RouteComponent() {
   const params = Route.useParams()
+  const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted)
 
   return (
     <>
@@ -76,15 +78,17 @@ function RouteComponent() {
           className="flex-1"
         />
         <Button
-          nativeButton={false}
           variant="destructive"
-          render={
-            <Link to="/view/$noteId" params={{ noteId: params.noteId }}>
-              Delete
-            </Link>
-          }
           className="flex-1"
-        />
+          onClick={() =>
+            setBeingDeleted({
+              id: params.noteId,
+              title: 'Belajar Tanstack Start',
+            })
+          }
+        >
+          Delete
+        </Button>
       </footer>
     </>
   )

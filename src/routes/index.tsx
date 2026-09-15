@@ -1,13 +1,12 @@
 import Main from '#/components/layout/main'
 import { Navbar } from '#/components/navbar'
-import { AlertDialog } from '#/components/ui/alert-dialog'
 import { Button } from '#/components/ui/button'
 import { DropdownMenu } from '#/components/ui/dropdown-menu'
 import { Item } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
+import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
-import { useState } from 'react'
 
 export const Route = createFileRoute('/')({ component: Home })
 
@@ -30,37 +29,10 @@ const notes = [
 ]
 
 function Home() {
-  const [isBeingDeleted, setIsBeingDeleted] = useState<{
-    id: string
-    title: string
-  } | null>(null)
+  const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted)
 
   return (
     <>
-      {/* !!null === false */}
-      <AlertDialog.Root
-        open={!!isBeingDeleted}
-        onOpenChange={() => setIsBeingDeleted(null)}
-      >
-        <AlertDialog.Content size="sm" className="border-3 border-zinc-100">
-          <AlertDialog.Header>
-            <AlertDialog.Media className="bg-[#ff4b4b] text-white">
-              <Trash2Icon />
-            </AlertDialog.Media>
-            <AlertDialog.Title>Delete Note</AlertDialog.Title>
-            <AlertDialog.Description>
-              Do you want to delete <strong>'{isBeingDeleted?.title}'</strong>?
-            </AlertDialog.Description>
-          </AlertDialog.Header>
-          <AlertDialog.Footer className="border-t-3 border-t-zinc-100 pt-4">
-            <AlertDialog.Cancel variant="outline">Cancel</AlertDialog.Cancel>
-            <AlertDialog.Cancel variant="destructive">
-              Delete
-            </AlertDialog.Cancel>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
-
       <Navbar.Root>
         <Navbar.Header>Ripunn Notes</Navbar.Header>
         <Navbar.Navigation>
@@ -131,7 +103,7 @@ function Home() {
                         <DropdownMenu.Item
                           variant="destructive"
                           onClick={() =>
-                            setIsBeingDeleted({
+                            setBeingDeleted({
                               id: note.id.toString(),
                               title: note.title,
                             })

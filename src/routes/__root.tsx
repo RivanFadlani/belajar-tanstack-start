@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
+import DeleteDialog from '#/components/delete-dialog'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -39,6 +40,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {/* Delete Dialog */}
+        <DeleteDialog />
+
         {/* Container Start */}
         <div className="container mx-auto flex flex-col justify-center px-4">
           {children}
