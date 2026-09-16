@@ -33,6 +33,8 @@ function RouteComponent() {
       return
     }
 
+    setErrors({})
+
     // console.log(signUpSchema.safeParse(SignUpInput))
   }
 

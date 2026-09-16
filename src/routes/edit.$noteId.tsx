@@ -36,6 +36,8 @@ function RouteComponent() {
 
     console.log(input.title)
     console.log(input.note)
+
+    setErrors({})
   }
 
   return (

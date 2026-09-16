@@ -29,6 +29,8 @@ function RouteComponent() {
       setErrors(z.flattenError(result.error).fieldErrors)
       return
     }
+
+    setErrors({})
   }
 
   return (
