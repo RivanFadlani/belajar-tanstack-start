@@ -18,8 +18,8 @@ const NoteForm = ({
     <form onSubmit={onSubmit}>
       <Field.Set>
         <Field.Group>
-          {/* errors.title awalnya ga punya data (object kosong -> undefined (thruty)), jadi === true */}
-          {/* lalu diberi double bang (!!) untuk ubah boolean menjadi ke nilai sebaliknya, jadi === false */}
+          {/* errors.title awalnya ga punya data (errors.title -> undefined (falsy)), jadi === falsy */}
+          {/* lalu diberi double bang (!!) untuk ubah non-bool (errors.title) menjadi ke boolean, jadi === false */}
           {/* supaya awal form di-load, status field tidak langsung data-invalid='true' */}
           <Field.Root data-invalid={!!errors.title}>
             <Field.Label htmlFor="title">Title</Field.Label>
