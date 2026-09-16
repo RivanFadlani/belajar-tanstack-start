@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as EditNoteIdRouteImport } from './routes/edit.$noteId'
 import { Route as ViewNoteIdRouteImport } from './routes/view.$noteId'
 
@@ -22,6 +24,16 @@ const IndexRoute = IndexRouteImport.update({
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditNoteIdRoute = EditNoteIdRouteImport.update({
@@ -38,12 +50,16 @@ const ViewNoteIdRoute = ViewNoteIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$noteId': typeof EditNoteIdRoute
   '/view/$noteId': typeof ViewNoteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$noteId': typeof EditNoteIdRoute
   '/view/$noteId': typeof ViewNoteIdRoute
 }
@@ -51,20 +67,43 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$noteId': typeof EditNoteIdRoute
   '/view/$noteId': typeof ViewNoteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
+  fullPaths:
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$noteId'
+    | '/view/$noteId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
-  id: '__root__' | '/' | '/create' | '/edit/$noteId' | '/view/$noteId'
+  to:
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$noteId'
+    | '/view/$noteId'
+  id:
+    | '__root__'
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$noteId'
+    | '/view/$noteId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   EditNoteIdRoute: typeof EditNoteIdRoute
   ViewNoteIdRoute: typeof ViewNoteIdRoute
 }
@@ -83,6 +122,20 @@ declare module '@tanstack/react-router' {
       path: '/create'
       fullPath: '/create'
       preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/edit/$noteId': {
@@ -105,6 +158,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   EditNoteIdRoute: EditNoteIdRoute,
   ViewNoteIdRoute: ViewNoteIdRoute,
 }
