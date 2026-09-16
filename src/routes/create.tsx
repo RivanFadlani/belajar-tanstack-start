@@ -7,7 +7,7 @@ import { MoveLeft } from 'lucide-react'
 import z from 'zod'
 import { useState } from 'react'
 import NoteForm from '#/components/note-form'
-import { noteSchema, type FieldErrors } from '#/schemas/note'
+import { noteSchema, type FieldErrors } from '#/schemas/note-schema'
 
 export const Route = createFileRoute('/create')({
   component: RouteComponent,

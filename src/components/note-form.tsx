@@ -2,7 +2,7 @@ import { Button } from '#/components/ui/button'
 import { Field } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import { Textarea } from '#/components/ui/textarea'
-import type { FieldErrors } from '#/schemas/note'
+import type { FieldErrors } from '#/schemas/note-schema'
 import type { Form } from '@base-ui/react/form'
 import type React from 'react'
 
