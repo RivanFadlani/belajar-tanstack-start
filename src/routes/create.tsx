@@ -2,20 +2,41 @@ import Main from '#/components/layout/main'
 import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 import z from 'zod'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import NoteForm from '#/components/note-form'
 import { noteSchema, type FieldErrors } from '#/schemas/note-schema'
+import { createServerFn, useServerFn } from '@tanstack/react-start'
+import { db } from '..'
+import { notesTable } from '#/db/schema'
+
+const createNote = createServerFn({ method: 'POST' })
+  .validator(noteSchema)
+  .handler(async ({ data }) => {
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    await db.insert(notesTable).values({
+      title: data.title,
+      note: data.note,
+    })
+
+    throw redirect({
+      to: '/',
+    })
+  })
 
 export const Route = createFileRoute('/create')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const createNoteFn = useServerFn(createNote)
+
   // Uncontrolled Approach (formData, name)
   const [errors, setErrors] = useState<FieldErrors>({})
+  const [isPending, startTransition] = useTransition()
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -36,6 +57,15 @@ function RouteComponent() {
     console.log(input.note)
 
     setErrors({})
+
+    startTransition(async () => {
+      await createNoteFn({
+        data: {
+          title: formData.get('title') as string,
+          note: formData.get('note') as string,
+        },
+      })
+    })
   }
 
   return (
@@ -66,6 +96,7 @@ function RouteComponent() {
             title: '',
             note: '',
           }}
+          isLoading={isPending}
         />
       </Main>
     </>

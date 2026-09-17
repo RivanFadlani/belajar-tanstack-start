@@ -5,14 +5,17 @@ import { Textarea } from '#/components/ui/textarea'
 import type { FieldErrors } from '#/schemas/note-schema'
 import type { Form } from '@base-ui/react/form'
 import type React from 'react'
+import { Spinner } from './ui/spinner'
 
 const NoteForm = ({
   onSubmit,
   errors,
   datas,
+  isLoading = false,
 }: React.ComponentProps<typeof Form> & {
   errors: FieldErrors
   datas: { title?: string; note?: string }
+  isLoading?: boolean
 }) => {
   return (
     <form onSubmit={onSubmit}>
@@ -50,7 +53,14 @@ const NoteForm = ({
         </Field.Group>
       </Field.Set>
       <Button type="submit" variant="outline" className="mt-6 w-full">
-        {datas?.title ? 'Update Note' : 'Create Note'}
+        {isLoading ? (
+          <>
+            <Spinner data-icon="inline-start" />
+            <span>Please wait</span>
+          </>
+        ) : (
+          <span>{datas?.title ? 'Update Note' : 'Create Note'}</span>
+        )}
       </Button>
     </form>
   )
