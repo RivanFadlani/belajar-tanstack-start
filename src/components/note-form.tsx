@@ -52,7 +52,12 @@ const NoteForm = ({
           </Field.Root>
         </Field.Group>
       </Field.Set>
-      <Button type="submit" variant="outline" className="mt-6 w-full">
+      <Button
+        type="submit"
+        variant="outline"
+        className="mt-6 w-full"
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             <Spinner data-icon="inline-start" />

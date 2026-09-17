@@ -15,7 +15,6 @@ export const Route = createFileRoute('/edit/$noteId')({
 
 function RouteComponent() {
   const [errors, setErrors] = useState<FieldErrors>({})
-  const params = Route.useParams()
 
   // Uncontrolled Approach (formData, name)
 
@@ -43,7 +42,7 @@ function RouteComponent() {
   return (
     <>
       <Navbar.Root>
-        <Navbar.Header>Edit {params.noteId}</Navbar.Header>
+        <Navbar.Header>Edit 'Nama Note'</Navbar.Header>
         <Navbar.Navigation>
           <Button
             variant="default"

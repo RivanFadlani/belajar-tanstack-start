@@ -53,8 +53,8 @@ function RouteComponent() {
       return
     }
 
-    console.log(input.title)
-    console.log(input.note)
+    // console.log(input.title)
+    // console.log(input.note)
 
     setErrors({})
 

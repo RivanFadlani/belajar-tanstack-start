@@ -7,29 +7,27 @@ import { Separator } from '#/components/ui/separator'
 import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
+import { db } from '..'
+import { notesTable } from '#/db/schema'
+import { createServerFn } from '@tanstack/react-start'
 
-export const Route = createFileRoute('/')({ component: Home })
+const getNotes = createServerFn({ method: 'GET' }).handler(async () => {
+  const notes = await db.select().from(notesTable)
+  return notes
+})
 
-const notes = [
-  {
-    id: 1234,
-    title: 'Belajar Tanstack Start',
-    note: "Hari ini aku belajar 'Tanstack Start'. Tapi tidak hanya itu, aku juga belajar Design Pattern yaitu 'Compound Component' menggunakan shadcn/ui",
+export const Route = createFileRoute('/')({
+  component: Home,
+  // loader = dieksekusi di dua environtment. client dan server
+  loader: async () => {
+    const notes = await getNotes()
+    return { notes }
   },
-  {
-    id: 1235,
-    title: 'Belajar NextJS',
-    note: "Hari ini aku belajar 'NextJS'. Tapi tidak hanya itu, aku juga belajar menggunakan shadcn/ui untuk mempercepat merancang UI",
-  },
-  {
-    id: 1236,
-    title: 'Belajar TypeScript',
-    note: "Hari ini aku belajar 'TypeScript'. Tapi tidak hanya itu, aku juga belajar Zod untuk melakukan validasi pada saat runtime",
-  },
-]
+})
 
 function Home() {
   const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted)
+  const { notes } = Route.useLoaderData()
 
   return (
     <>
@@ -58,8 +56,12 @@ function Home() {
 
         <div className="grid grid-cols-1 gap-3">
           {notes.map((note) => (
-            <Item.Root variant="outline" className="mx-auto w-full">
-              <Item.Content key={note.id}>
+            <Item.Root
+              key={note.id}
+              variant="outline"
+              className="mx-auto w-full"
+            >
+              <Item.Content>
                 <Item.Title>{note.title}</Item.Title>
                 <Item.Description>{note.note}</Item.Description>
               </Item.Content>
