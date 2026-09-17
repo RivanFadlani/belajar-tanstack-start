@@ -11,6 +11,6 @@ export const noteSchema = createInsertSchema(notesTable, {
 export const noteSelectSchema = createSelectSchema(notesTable)
 
 export type Note = z.infer<typeof noteSchema>
-export type NOteSelect = z.infer<typeof noteSelectSchema>
+export type NoteSelect = z.infer<typeof noteSelectSchema>
 
 export type FieldErrors = z.core.$ZodFlattenedError<Note>['fieldErrors']

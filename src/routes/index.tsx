@@ -8,11 +8,10 @@ import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
 import { db } from '..'
-import { notesTable } from '#/db/schema'
 import { createServerFn } from '@tanstack/react-start'
 
 const getNotes = createServerFn({ method: 'GET' }).handler(async () => {
-  const notes = await db.select().from(notesTable)
+  const notes = await db.query.notesTable.findMany()
   return notes
 })
 

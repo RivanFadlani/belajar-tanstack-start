@@ -3,21 +3,57 @@ import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
 import { useDeleteStore } from '#/stores/delete-store'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
+import { db } from '..'
+
+const getNotes = createServerFn({ method: 'GET' })
+  // 2)
+  .validator((noteId: string) => noteId)
+  .handler(async ({ data: noteId }) => {
+    const note = await db.query.notesTable.findFirst({
+      where: { id: noteId },
+    })
+
+    return note
+  })
 
 export const Route = createFileRoute('/view/$noteId')({
   component: RouteComponent,
+  // 1)
+  loader: async ({ params }) => {
+    const note = await getNotes({ data: params.noteId })
+    if (!note) {
+      throw notFound()
+    }
+    return { note }
+  },
+  notFoundComponent: () => {
+    return (
+      <div>
+        Note not found.{' '}
+        <Link to="/" className="underline">
+          Back to home
+        </Link>
+      </div>
+    )
+  },
+  errorComponent: () => {
+    return <div>Error Boundary</div>
+  },
 })
 
 function RouteComponent() {
   const params = Route.useParams()
+  // 3)
+  const { note } = Route.useLoaderData()
   const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted)
 
   return (
     <>
       <Navbar.Root>
-        <Navbar.Header>View {params.noteId}</Navbar.Header>
+        <Navbar.Header>View '{note?.title}'</Navbar.Header>
         <Navbar.Navigation>
           <Button
             variant="default"
@@ -41,26 +77,29 @@ function RouteComponent() {
           </h1>
           <br />
           <h2 className="inline text-2xl font-medium capitalize">
-            Belajar Tanstack Start
+            {note?.title}
           </h2>
         </header>
 
         <article className="mb-8">
           <h1 className="font-sans text-sm font-medium text-zinc-400 capitalize">
-            Note Title
+            Note Content
           </h1>
-          <p>
-            Hari ini aku belajar 'Tanstack Start'. Tapi tidak hanya itu, aku
-            juga belajar Design Pattern yaitu 'Compound Component' menggunakan
-            shadcn/ui
-          </p>
+          <p>{note?.note}</p>
         </article>
+
+        <div className="mb-8">
+          <h1 className="font-sans text-sm font-medium text-zinc-400 capitalize">
+            Created At
+          </h1>
+          <h2>{note.createdAt.toLocaleDateString()}</h2>
+        </div>
 
         <div>
           <h1 className="font-sans text-sm font-medium text-zinc-400 capitalize">
             Created At
           </h1>
-          <h2>3 Days Ago</h2>
+          <h2>{note.createdAt.toLocaleDateString()}</h2>
         </div>
 
         <Separator className="my-6" />
