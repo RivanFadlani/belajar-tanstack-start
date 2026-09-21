@@ -11,7 +11,9 @@ import { db } from '..'
 import { createServerFn } from '@tanstack/react-start'
 
 const getNotes = createServerFn({ method: 'GET' }).handler(async () => {
-  const notes = await db.query.notesTable.findMany()
+  const notes = await db.query.notesTable.findMany({
+    orderBy: { createdAt: 'desc' },
+  })
   return notes
 })
 

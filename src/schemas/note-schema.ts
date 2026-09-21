@@ -12,6 +12,10 @@ export const updateNoteSchema = noteSchema.extend({
   id: z.uuid({ error: 'Invalid UUID' }),
 })
 
+export const deleteNoteSchema = z.object({
+  id: z.uuid(),
+})
+
 export const noteSelectSchema = createSelectSchema(notesTable)
 
 export type Note = z.infer<typeof noteSchema>

@@ -8,7 +8,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
 import { db } from '..'
 
-const getNotes = createServerFn({ method: 'GET' })
+const getNote = createServerFn({ method: 'GET' })
   // 2)
   .validator((noteId: string) => noteId)
   .handler(async ({ data: noteId }) => {
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/view/$noteId')({
   component: RouteComponent,
   // 1)
   loader: async ({ params }) => {
-    const note = await getNotes({ data: params.noteId })
+    const note = await getNote({ data: params.noteId })
     if (!note) {
       throw notFound()
     }
@@ -122,7 +122,7 @@ function RouteComponent() {
           onClick={() =>
             setBeingDeleted({
               id: params.noteId,
-              title: 'Belajar Tanstack Start',
+              title: note.title,
             })
           }
         >

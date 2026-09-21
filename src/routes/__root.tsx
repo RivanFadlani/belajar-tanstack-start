@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
 import DeleteDialog from '#/components/delete-dialog'
+import { Toaster } from '#/components/ui/toast'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -42,6 +43,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {/* Delete Dialog */}
         <DeleteDialog />
+
+        <Toaster />
 
         {/* Container Start */}
         <div className="container mx-auto flex flex-col justify-center px-4">
