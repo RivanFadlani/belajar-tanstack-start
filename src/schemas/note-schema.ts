@@ -8,6 +8,10 @@ export const noteSchema = createInsertSchema(notesTable, {
     schema.min(8, { error: 'Must be at least 8 characters long' }),
 })
 
+export const updateNoteSchema = noteSchema.extend({
+  id: z.uuid({ error: 'Invalid UUID' }),
+})
+
 export const noteSelectSchema = createSelectSchema(notesTable)
 
 export type Note = z.infer<typeof noteSchema>

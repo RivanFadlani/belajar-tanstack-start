@@ -3,14 +3,26 @@ import { Navbar } from '#/components/navbar'
 import NoteForm from '#/components/note-form'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
-import { noteSchema, type FieldErrors } from '#/schemas/note-schema'
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
+import {
+  noteSchema,
+  updateNoteSchema,
+  type FieldErrors,
+} from '#/schemas/note-schema'
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  redirect,
+} from '@tanstack/react-router'
+import { createServerFn, useServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import z from 'zod'
 import { db } from '..'
+import { notesTable } from '#/db/schema'
+import { eq } from 'drizzle-orm'
 
+// GET
 const getNote = createServerFn({ method: 'GET' })
   .validator((noteId: string) => noteId)
   .handler(async ({ data: noteId }) => {
@@ -19,6 +31,26 @@ const getNote = createServerFn({ method: 'GET' })
     })
 
     return note
+  })
+
+// UPDATE
+const updateNote = createServerFn({ method: 'POST' })
+  .validator(updateNoteSchema)
+  .handler(async ({ data }) => {
+    await db
+      .update(notesTable)
+      .set({
+        title: data.title,
+        note: data.note,
+      })
+      .where(eq(notesTable.id, data.id))
+
+    throw redirect({
+      to: '/view/$noteId',
+      params: {
+        noteId: data.id,
+      },
+    })
   })
 
 export const Route = createFileRoute('/edit/$noteId')({
@@ -48,10 +80,13 @@ export const Route = createFileRoute('/edit/$noteId')({
 function RouteComponent() {
   const { note } = Route.useLoaderData()
   const [errors, setErrors] = useState<FieldErrors>({})
+  const params = Route.useParams()
+  const updateFormFn = useServerFn(updateNote)
+  const [isPending, startTransition] = useTransition()
 
   // Uncontrolled Approach (formData, name)
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
@@ -70,12 +105,23 @@ function RouteComponent() {
     // console.log(input.note)
 
     setErrors({})
+
+    // UPDATE
+    startTransition(async () => {
+      await updateFormFn({
+        data: {
+          title: formData.get('title') as string,
+          note: formData.get('note') as string,
+          id: params.noteId,
+        },
+      })
+    })
   }
 
   return (
     <>
       <Navbar.Root>
-        <Navbar.Header>Edit 'Nama Note'</Navbar.Header>
+        <Navbar.Header>Edit '{note.title}'</Navbar.Header>
         <Navbar.Navigation>
           <Button
             variant="default"
@@ -96,6 +142,7 @@ function RouteComponent() {
         <NoteForm
           onSubmit={handleSubmit}
           errors={errors}
+          isLoading={isPending}
           datas={{
             title: note.title,
             note: note.note,

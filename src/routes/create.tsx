@@ -58,6 +58,7 @@ function RouteComponent() {
 
     setErrors({})
 
+    // CREATE
     startTransition(async () => {
       await createNoteFn({
         data: {

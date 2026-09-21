@@ -97,9 +97,9 @@ function RouteComponent() {
 
         <div>
           <h1 className="font-sans text-sm font-medium text-zinc-400 capitalize">
-            Created At
+            Updated At
           </h1>
-          <h2>{note.createdAt.toLocaleDateString()}</h2>
+          <h2>{note.updatedAt.toLocaleDateString()}</h2>
         </div>
 
         <Separator className="my-6" />
