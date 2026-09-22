@@ -7,7 +7,6 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
 import { db } from '..'
-import { title } from 'process'
 
 const getNote = createServerFn({ method: 'GET' })
   // 2)
