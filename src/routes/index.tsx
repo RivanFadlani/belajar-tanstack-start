@@ -43,6 +43,9 @@ export const Route = createFileRoute('/')({
     const notes = await getNotes({ data: { q: deps.q } })
     return { notes }
   },
+  head: () => ({
+    meta: [{ title: 'Notes' }],
+  }),
 })
 
 function Home() {

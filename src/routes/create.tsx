@@ -29,6 +29,9 @@ const createNote = createServerFn({ method: 'POST' })
 
 export const Route = createFileRoute('/create')({
   component: RouteComponent,
+  head: () => ({
+    meta: [{ title: 'Create Note' }],
+  }),
 })
 
 function RouteComponent() {

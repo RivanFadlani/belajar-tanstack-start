@@ -75,6 +75,9 @@ export const Route = createFileRoute('/edit/$noteId')({
   errorComponent: () => {
     return <div>Error Boundary</div>
   },
+  head: ({ loaderData }) => ({
+    meta: [{ title: `Edit: ${loaderData?.note.title}` }],
+  }),
 })
 
 function RouteComponent() {
