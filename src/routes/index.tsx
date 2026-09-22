@@ -9,19 +9,38 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
 import { db } from '..'
 import { createServerFn } from '@tanstack/react-start'
+import z from 'zod'
+import NoteSearch from '#/components/note-search'
 
-const getNotes = createServerFn({ method: 'GET' }).handler(async () => {
-  const notes = await db.query.notesTable.findMany({
-    orderBy: { createdAt: 'desc' },
-  })
-  return notes
+const noteSearchSchema = z.object({
+  q: z.string().optional(),
 })
+
+const getNotes = createServerFn({ method: 'GET' })
+  .validator(noteSearchSchema)
+  .handler(async ({ data }) => {
+    const notes = await db.query.notesTable.findMany({
+      where: data.q
+        ? {
+            OR: [
+              { title: { ilike: `%${data.q}%` } },
+              { note: { ilike: `%${data.q}%` } },
+            ],
+          }
+        : undefined,
+      orderBy: { createdAt: 'desc' },
+    })
+    return notes
+  })
 
 export const Route = createFileRoute('/')({
   component: Home,
+  validateSearch: noteSearchSchema,
+  loaderDeps: ({ search }) => ({ q: search.q }),
   // loader = dieksekusi di dua environtment. client dan server
-  loader: async () => {
-    const notes = await getNotes()
+  loader: async ({ deps }) => {
+    console.log(deps.q)
+    const notes = await getNotes({ data: { q: deps.q } })
     return { notes }
   },
 })
@@ -54,6 +73,8 @@ function Home() {
         <h1 className="mx-4 mb-4 font-sans text-xl font-medium uppercase">
           Note Lists
         </h1>
+
+        <NoteSearch />
 
         <div className="grid grid-cols-1 gap-3">
           {notes.map((note) => (

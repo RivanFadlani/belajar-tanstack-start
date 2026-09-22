@@ -1,4 +1,3 @@
-import { Button } from './ui/button'
 import type React from 'react'
 
 const NavbarRoot = ({ children }: { children: React.ReactNode }) => {
