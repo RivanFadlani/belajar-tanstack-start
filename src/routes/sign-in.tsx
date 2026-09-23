@@ -1,19 +1,50 @@
+import { authenticateUser } from '#/auth'
 import { LoginForm } from '#/components/login-form'
+import { Alert } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import { Card } from '#/components/ui/card'
 import { Field } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
+import { Spinner } from '#/components/ui/spinner'
+import { useAppSession } from '#/lib/session'
 import { signInSchema, type SignInFieldErrors } from '#/schemas/auth-schema'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import { createServerFn, useServerFn } from '@tanstack/react-start'
+import { XCircleIcon } from 'lucide-react'
+import { useState, useTransition } from 'react'
 import z from 'zod'
+
+const sigIn = createServerFn({ method: 'POST' })
+  .validator(signInSchema)
+  .handler(async ({ data }) => {
+    const user = await authenticateUser(data.email, data.password)
+
+    if (!user) {
+      return {
+        error: 'Invalid credentials',
+      }
+    }
+
+    const session = await useAppSession()
+    await session.update({
+      userId: user.id,
+    })
+
+    throw redirect({
+      to: '/',
+    })
+  })
 
 export const Route = createFileRoute('/sign-in')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const signInFn = useServerFn(sigIn)
+
   const [errors, setErrors] = useState<SignInFieldErrors>({})
+  const [signInError, setSignInError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -31,6 +62,22 @@ function RouteComponent() {
     }
 
     setErrors({})
+
+    startTransition(async () => {
+      try {
+        setSignInError(null)
+
+        const sigInRes = await signInFn({
+          data: result.data,
+        })
+
+        if (sigInRes.error) {
+          setSignInError(sigInRes.error)
+        }
+      } catch {
+        setSignInError('Something went wrong. Please try again!')
+      }
+    })
   }
 
   return (
@@ -40,6 +87,17 @@ function RouteComponent() {
           <LoginForm>
             <Card.Content>
               <form onSubmit={handleSubmit} noValidate>
+                {signInError && (
+                  <Alert.Root
+                    variant="destructive"
+                    className="border-destructive bg-destructive/10 mb-6 border-2"
+                  >
+                    <XCircleIcon />
+                    <Alert.Title>Error!</Alert.Title>
+                    <Alert.Description>{signInError}</Alert.Description>
+                  </Alert.Root>
+                )}
+
                 <Field.Group>
                   {/* Email Field Start */}
                   <Field.Root data-invalid={!!errors.email}>
@@ -71,7 +129,15 @@ function RouteComponent() {
                   </Field.Root>
                   {/* Password Field End */}
                   <Field.Root>
-                    <Button type="submit">Sign In</Button>
+                    <Button type="submit" disabled={isPending}>
+                      {isPending ? (
+                        <>
+                          <Spinner /> <span>Please Wait...</span>
+                        </>
+                      ) : (
+                        <span>Sign In</span>
+                      )}
+                    </Button>
 
                     <Field.Description className="text-center">
                       Don&apos;t have an account?{' '}
