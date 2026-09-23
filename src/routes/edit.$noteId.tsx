@@ -81,10 +81,11 @@ export const Route = createFileRoute('/edit/$noteId')({
 })
 
 function RouteComponent() {
+  const updateFormFn = useServerFn(updateNote)
+
   const { note } = Route.useLoaderData()
   const [errors, setErrors] = useState<FieldErrors>({})
   const params = Route.useParams()
-  const updateFormFn = useServerFn(updateNote)
   const [isPending, startTransition] = useTransition()
 
   // Uncontrolled Approach (formData, name)
@@ -111,13 +112,16 @@ function RouteComponent() {
 
     // UPDATE
     startTransition(async () => {
-      await updateFormFn({
-        data: {
-          title: formData.get('title') as string,
-          note: formData.get('note') as string,
-          id: params.noteId,
-        },
-      })
+      try {
+        await updateFormFn({
+          data: {
+            ...result.data,
+            id: params.noteId,
+          },
+        })
+      } catch {
+        console.log('Something went wrong. Please try again!')
+      }
     })
   }
 

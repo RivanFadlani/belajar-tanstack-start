@@ -63,12 +63,13 @@ function RouteComponent() {
 
     // CREATE
     startTransition(async () => {
-      await createNoteFn({
-        data: {
-          title: formData.get('title') as string,
-          note: formData.get('note') as string,
-        },
-      })
+      try {
+        await createNoteFn({
+          data: result.data,
+        })
+      } catch {
+        console.log('Something went wrong. Please try again!')
+      }
     })
   }
 
