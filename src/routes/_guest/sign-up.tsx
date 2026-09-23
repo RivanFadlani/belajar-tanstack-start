@@ -9,12 +9,12 @@ import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { createServerFn, useServerFn } from '@tanstack/react-start'
 import React, { useState, useTransition } from 'react'
 import z from 'zod'
-import { db } from '..'
 import bcrypt from 'bcryptjs'
 import { usersTable } from '#/db/schema'
 import { useAppSession } from '#/lib/session'
 import { Alert } from '#/components/ui/alert'
 import { XCircleIcon } from 'lucide-react'
+import { db } from '#/index'
 
 const signUp = createServerFn({ method: 'POST' })
   .validator(signUpSchema)

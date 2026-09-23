@@ -3,6 +3,7 @@ import { pgTable } from 'drizzle-orm/pg-core/table'
 
 export const notesTable = pgTable('notes', {
   id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => usersTable.id), // relation
   title: varchar('title', { length: 100 }).notNull(),
   note: text('note').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

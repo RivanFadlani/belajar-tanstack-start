@@ -19,15 +19,19 @@ import { MoveLeft } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import z from 'zod'
 import { notesTable } from '#/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { db } from '#/index'
+import { authMiddleware } from '#/middlewares/auth-middleware'
 
 // GET
 const getNote = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
   .validator((noteId: string) => noteId)
-  .handler(async ({ data: noteId }) => {
+  .handler(async ({ data: noteId, context }) => {
+    const { user } = context
+
     const note = await db.query.notesTable.findFirst({
-      where: { id: noteId },
+      where: { AND: [{ userId: user.id }, { id: noteId }] },
     })
 
     return note
@@ -35,15 +39,18 @@ const getNote = createServerFn({ method: 'GET' })
 
 // UPDATE
 const updateNote = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(updateNoteSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { user } = context
+
     await db
       .update(notesTable)
       .set({
         title: data.title,
         note: data.note,
       })
-      .where(eq(notesTable.id, data.id))
+      .where(and(eq(notesTable.id, data.id), eq(notesTable.userId, user.id)))
 
     throw redirect({
       to: '/view/$noteId',

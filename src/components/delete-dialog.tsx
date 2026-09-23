@@ -6,18 +6,23 @@ import { Trash2Icon } from 'lucide-react'
 import { useTransition } from 'react'
 import { Spinner } from './ui/spinner'
 import { toast } from './ui/toast'
-import { db } from '..'
 import { notesTable } from '#/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { redirect, useRouter } from '@tanstack/react-router'
+import { authMiddleware } from '#/middlewares/auth-middleware'
+import { db } from '#/index'
 
 const deleteNote = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(deleteNoteSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     // await new Promise((resolve) => setTimeout(resolve, 3000))
     // throw new Error('haha')
+    const { user } = context
 
-    await db.delete(notesTable).where(eq(notesTable.id, data.id))
+    await db
+      .delete(notesTable)
+      .where(and(eq(notesTable.id, data.id), eq(notesTable.userId, user.id)))
 
     throw redirect({
       to: '/',
@@ -26,6 +31,7 @@ const deleteNote = createServerFn({ method: 'POST' })
 
 const DeleteDialog = () => {
   const deleteNoteFn = useServerFn(deleteNote)
+
   const beingDeleted = useDeleteStore((state) => state.beingDeleted)
   const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted)
   const [isPending, startTransition] = useTransition()

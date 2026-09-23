@@ -3,17 +3,21 @@ import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
 import { db } from '#/index'
+import { authMiddleware } from '#/middlewares/auth-middleware'
 import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
 
 const getNote = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
   // 2)
   .validator((noteId: string) => noteId)
-  .handler(async ({ data: noteId }) => {
+  .handler(async ({ data: noteId, context }) => {
+    const { user } = context
+
     const note = await db.query.notesTable.findFirst({
-      where: { id: noteId },
+      where: { AND: [{ userId: user.id }, { id: noteId }] },
     })
 
     return note

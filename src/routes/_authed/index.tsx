@@ -11,23 +11,35 @@ import { createServerFn } from '@tanstack/react-start'
 import z from 'zod'
 import NoteSearch from '#/components/note-search'
 import { db } from '#/index'
+import { authMiddleware } from '#/middlewares/auth-middleware'
 
 const noteSearchSchema = z.object({
   q: z.string().optional(),
 })
 
 const getNotes = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
   .validator(noteSearchSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { user } = context
+
+    // search berdasarkan 'title' dan 'note'
+    const searchFilter = data.q
+      ? {
+          OR: [
+            { title: { ilike: `%${data.q}%` } },
+            { note: { ilike: `%${data.q}%` } },
+          ],
+        }
+      : undefined
+
+    // Kalau data.q ada (truthy): hasilnya [searchFilter] -> array berisi 1 objek { OR: [...] }, lalu di-spread jadi item di dalam AND.
     const notes = await db.query.notesTable.findMany({
-      where: data.q
-        ? {
-            OR: [
-              { title: { ilike: `%${data.q}%` } },
-              { note: { ilike: `%${data.q}%` } },
-            ],
-          }
-        : undefined,
+      where: {
+        // hasil (ternary): expression menjadi: ...[{ OR: [...] }].
+        // Spread operator Membuka/mengeluarkan isi array tersebut.
+        AND: [{ userId: user.id }, ...(searchFilter ? [searchFilter] : [])],
+      },
       orderBy: { createdAt: 'desc' },
     })
     return notes

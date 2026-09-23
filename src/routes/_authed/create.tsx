@@ -3,7 +3,7 @@ import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
-import { MoveLeft } from 'lucide-react'
+import { MoveLeft, XCircleIcon } from 'lucide-react'
 import z from 'zod'
 import { useState, useTransition } from 'react'
 import NoteForm from '#/components/note-form'
@@ -11,15 +11,20 @@ import { noteSchema, type FieldErrors } from '#/schemas/note-schema'
 import { createServerFn, useServerFn } from '@tanstack/react-start'
 import { notesTable } from '#/db/schema'
 import { db } from '#/index'
+import { authMiddleware } from '#/middlewares/auth-middleware'
+import { Alert } from '#/components/ui/alert'
 
 const createNote = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(noteSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     // await new Promise((resolve) => setTimeout(resolve, 3000))
+    const { user } = context
 
     await db.insert(notesTable).values({
       title: data.title,
       note: data.note,
+      userId: user.id,
     })
 
     throw redirect({
@@ -39,6 +44,7 @@ function RouteComponent() {
 
   // Uncontrolled Approach (formData, name)
   const [errors, setErrors] = useState<FieldErrors>({})
+  const [createError, setCreateError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -64,11 +70,13 @@ function RouteComponent() {
     // CREATE
     startTransition(async () => {
       try {
+        setCreateError(null)
+
         await createNoteFn({
           data: result.data,
         })
       } catch {
-        console.log('Something went wrong. Please try again!')
+        setCreateError('Something went wrong. Please try again!')
       }
     })
   }
@@ -93,6 +101,17 @@ function RouteComponent() {
 
       <Main>
         <Separator className="mb-4" />
+
+        {createError && (
+          <Alert.Root
+            variant="destructive"
+            className="border-destructive bg-destructive/10 mb-6 border-2"
+          >
+            <XCircleIcon />
+            <Alert.Title>Error!</Alert.Title>
+            <Alert.Description>{createError}</Alert.Description>
+          </Alert.Root>
+        )}
 
         <NoteForm
           onSubmit={handleSubmit}
