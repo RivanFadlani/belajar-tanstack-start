@@ -2,11 +2,11 @@ import Main from '#/components/layout/main'
 import { Navbar } from '#/components/navbar'
 import { Button } from '#/components/ui/button'
 import { Separator } from '#/components/ui/separator'
+import { db } from '#/index'
 import { useDeleteStore } from '#/stores/delete-store'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
-import { db } from '..'
 
 const getNote = createServerFn({ method: 'GET' })
   // 2)
@@ -19,7 +19,7 @@ const getNote = createServerFn({ method: 'GET' })
     return note
   })
 
-export const Route = createFileRoute('/view/$noteId')({
+export const Route = createFileRoute('/_authed/view/$noteId')({
   component: RouteComponent,
   // 1)
   loader: async ({ params }) => {

@@ -6,7 +6,7 @@ import { Search } from 'lucide-react'
 import { Button } from './ui/button'
 
 const NoteSearch = () => {
-  const search = useSearch({ from: '/' }) // sama seperti Route.useSearch()
+  const search = useSearch({ from: '/_authed/' }) // sama seperti Route.useSearch()
   const navigate = useNavigate()
 
   const handleSearch = (e: React.SubmitEvent<HTMLFormElement>) => {

@@ -5,13 +5,12 @@ import { DropdownMenu } from '#/components/ui/dropdown-menu'
 import { Item } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
 import { useDeleteStore } from '#/stores/delete-store'
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { EllipsisVertical, Eye, Pencil, Plus, Trash2Icon } from 'lucide-react'
-import { db } from '..'
 import { createServerFn } from '@tanstack/react-start'
 import z from 'zod'
 import NoteSearch from '#/components/note-search'
-import { getCurrentUserFn } from '#/auth'
+import { db } from '#/index'
 
 const noteSearchSchema = z.object({
   q: z.string().optional(),
@@ -34,18 +33,7 @@ const getNotes = createServerFn({ method: 'GET' })
     return notes
   })
 
-export const Route = createFileRoute('/')({
-  beforeLoad: async () => {
-    const user = await getCurrentUserFn()
-
-    if (!user) {
-      throw redirect({
-        to: '/sign-in',
-      })
-    }
-
-    return { user }
-  },
+export const Route = createFileRoute('/_authed/')({
   loaderDeps: ({ search }) => ({ q: search.q }),
   // loader = dieksekusi di dua environtment. client dan server
   loader: async ({ deps }) => {

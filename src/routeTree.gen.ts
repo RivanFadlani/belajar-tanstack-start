@@ -9,21 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as CreateRouteImport } from './routes/create'
+import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as EditNoteIdRouteImport } from './routes/edit.$noteId'
-import { Route as ViewNoteIdRouteImport } from './routes/view.$noteId'
+import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as AuthedCreateRouteImport } from './routes/_authed/create'
+import { Route as AuthedEditNoteIdRouteImport } from './routes/_authed/edit.$noteId'
+import { Route as AuthedViewNoteIdRouteImport } from './routes/_authed/view.$noteId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CreateRoute = CreateRouteImport.update({
-  id: '/create',
-  path: '/create',
+const AuthedRouteRoute = AuthedRouteRouteImport.update({
+  id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -36,92 +31,94 @@ const SignUpRoute = SignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EditNoteIdRoute = EditNoteIdRouteImport.update({
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedCreateRoute = AuthedCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedEditNoteIdRoute = AuthedEditNoteIdRouteImport.update({
   id: '/edit/$noteId',
   path: '/edit/$noteId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
-const ViewNoteIdRoute = ViewNoteIdRouteImport.update({
+const AuthedViewNoteIdRoute = AuthedViewNoteIdRouteImport.update({
   id: '/view/$noteId',
   path: '/view/$noteId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
+  '/': typeof AuthedIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/edit/$noteId': typeof EditNoteIdRoute
-  '/view/$noteId': typeof ViewNoteIdRoute
+  '/create': typeof AuthedCreateRoute
+  '/edit/$noteId': typeof AuthedEditNoteIdRoute
+  '/view/$noteId': typeof AuthedViewNoteIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/edit/$noteId': typeof EditNoteIdRoute
-  '/view/$noteId': typeof ViewNoteIdRoute
+  '/create': typeof AuthedCreateRoute
+  '/': typeof AuthedIndexRoute
+  '/edit/$noteId': typeof AuthedEditNoteIdRoute
+  '/view/$noteId': typeof AuthedViewNoteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
+  '/_authed': typeof AuthedRouteRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/edit/$noteId': typeof EditNoteIdRoute
-  '/view/$noteId': typeof ViewNoteIdRoute
+  '/_authed/create': typeof AuthedCreateRoute
+  '/_authed/': typeof AuthedIndexRoute
+  '/_authed/edit/$noteId': typeof AuthedEditNoteIdRoute
+  '/_authed/view/$noteId': typeof AuthedViewNoteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/create'
     | '/sign-in'
     | '/sign-up'
+    | '/create'
     | '/edit/$noteId'
     | '/view/$noteId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/create'
     | '/sign-in'
     | '/sign-up'
+    | '/create'
+    | '/'
     | '/edit/$noteId'
     | '/view/$noteId'
   id:
     | '__root__'
-    | '/'
-    | '/create'
+    | '/_authed'
     | '/sign-in'
     | '/sign-up'
-    | '/edit/$noteId'
-    | '/view/$noteId'
+    | '/_authed/create'
+    | '/_authed/'
+    | '/_authed/edit/$noteId'
+    | '/_authed/view/$noteId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CreateRoute: typeof CreateRoute
+  AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
-  EditNoteIdRoute: typeof EditNoteIdRoute
-  ViewNoteIdRoute: typeof ViewNoteIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authed': {
+      id: '/_authed'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/create': {
-      id: '/create'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateRouteImport
+      preLoaderRoute: typeof AuthedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -138,30 +135,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/edit/$noteId': {
-      id: '/edit/$noteId'
+    '/_authed/': {
+      id: '/_authed/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/create': {
+      id: '/_authed/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof AuthedCreateRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/edit/$noteId': {
+      id: '/_authed/edit/$noteId'
       path: '/edit/$noteId'
       fullPath: '/edit/$noteId'
-      preLoaderRoute: typeof EditNoteIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedEditNoteIdRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/view/$noteId': {
-      id: '/view/$noteId'
+    '/_authed/view/$noteId': {
+      id: '/_authed/view/$noteId'
       path: '/view/$noteId'
       fullPath: '/view/$noteId'
-      preLoaderRoute: typeof ViewNoteIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedViewNoteIdRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
   }
 }
 
+interface AuthedRouteRouteChildren {
+  AuthedCreateRoute: typeof AuthedCreateRoute
+  AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedEditNoteIdRoute: typeof AuthedEditNoteIdRoute
+  AuthedViewNoteIdRoute: typeof AuthedViewNoteIdRoute
+}
+
+const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedCreateRoute: AuthedCreateRoute,
+  AuthedIndexRoute: AuthedIndexRoute,
+  AuthedEditNoteIdRoute: AuthedEditNoteIdRoute,
+  AuthedViewNoteIdRoute: AuthedViewNoteIdRoute,
+}
+
+const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
+  AuthedRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CreateRoute: CreateRoute,
+  AuthedRouteRoute: AuthedRouteRouteWithChildren,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
-  EditNoteIdRoute: EditNoteIdRoute,
-  ViewNoteIdRoute: ViewNoteIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

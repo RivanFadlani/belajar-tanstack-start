@@ -18,9 +18,9 @@ import { createServerFn, useServerFn } from '@tanstack/react-start'
 import { MoveLeft } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import z from 'zod'
-import { db } from '..'
 import { notesTable } from '#/db/schema'
 import { eq } from 'drizzle-orm'
+import { db } from '#/index'
 
 // GET
 const getNote = createServerFn({ method: 'GET' })
@@ -53,7 +53,7 @@ const updateNote = createServerFn({ method: 'POST' })
     })
   })
 
-export const Route = createFileRoute('/edit/$noteId')({
+export const Route = createFileRoute('/_authed/edit/$noteId')({
   component: RouteComponent,
   loader: async ({ params }) => {
     const note = await getNote({ data: params.noteId })

@@ -9,8 +9,8 @@ import { useState, useTransition } from 'react'
 import NoteForm from '#/components/note-form'
 import { noteSchema, type FieldErrors } from '#/schemas/note-schema'
 import { createServerFn, useServerFn } from '@tanstack/react-start'
-import { db } from '..'
 import { notesTable } from '#/db/schema'
+import { db } from '#/index'
 
 const createNote = createServerFn({ method: 'POST' })
   .validator(noteSchema)
@@ -27,7 +27,7 @@ const createNote = createServerFn({ method: 'POST' })
     })
   })
 
-export const Route = createFileRoute('/create')({
+export const Route = createFileRoute('/_authed/create')({
   component: RouteComponent,
   head: () => ({
     meta: [{ title: 'Create Note' }],
