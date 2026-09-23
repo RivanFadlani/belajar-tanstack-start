@@ -6,7 +6,7 @@ import { Input } from '#/components/ui/input'
 import { Spinner } from '#/components/ui/spinner'
 import { signUpSchema, type SignUpFieldErrors } from '#/schemas/auth-schema'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn, useServerFn } from '@tanstack/react-start'
 import React, { useState, useTransition } from 'react'
 import z from 'zod'
 import { db } from '..'
@@ -52,6 +52,8 @@ export const Route = createFileRoute('/sign-up')({
 })
 
 function RouteComponent() {
+  const signUpFn = useServerFn(signUp)
+
   const [errors, setErrors] = useState<SignUpFieldErrors>({})
   const [signUpError, setSignUpError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -78,23 +80,22 @@ function RouteComponent() {
     setErrors({})
 
     startTransition(async () => {
-      const signUpRes = await signUp({
-        data: {
-          name: formData.get('name') as string,
-          email: formData.get('email') as string,
-          password: formData.get('password') as string,
-          confirmPassword: formData.get('confirm-password') as string,
-        },
-      })
+      try {
+        setSignUpError(null)
 
-      if (signUpRes?.error) {
-        setSignUpError(signUpRes.error)
-      } else {
-        router.navigate({ to: '/' })
+        const signUpRes = await signUpFn({
+          data: result.data,
+        })
+
+        if (signUpRes?.error) {
+          setSignUpError(signUpRes.error)
+        } else {
+          router.navigate({ to: '/' })
+        }
+      } catch {
+        setSignUpError('Something went wrong. Please try again!')
       }
     })
-
-    setSignUpError(null)
 
     // console.log(signUpSchema.safeParse(SignUpInput))
   }
