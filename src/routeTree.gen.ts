@@ -10,10 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
-import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
 import { Route as AuthedCreateRouteImport } from './routes/_authed/create'
+import { Route as GuestSignInRouteImport } from './routes/_guest/sign-in'
+import { Route as GuestSignUpRouteImport } from './routes/_guest/sign-up'
 import { Route as AuthedEditNoteIdRouteImport } from './routes/_authed/edit.$noteId'
 import { Route as AuthedViewNoteIdRouteImport } from './routes/_authed/view.$noteId'
 
@@ -21,14 +22,8 @@ const AuthedRouteRoute = AuthedRouteRouteImport.update({
   id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignUpRoute = SignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
+const GuestRouteRoute = GuestRouteRouteImport.update({
+  id: '/_guest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedIndexRoute = AuthedIndexRouteImport.update({
@@ -40,6 +35,16 @@ const AuthedCreateRoute = AuthedCreateRouteImport.update({
   id: '/create',
   path: '/create',
   getParentRoute: () => AuthedRouteRoute,
+} as any)
+const GuestSignInRoute = GuestSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => GuestRouteRoute,
+} as any)
+const GuestSignUpRoute = GuestSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => GuestRouteRoute,
 } as any)
 const AuthedEditNoteIdRoute = AuthedEditNoteIdRouteImport.update({
   id: '/edit/$noteId',
@@ -54,26 +59,27 @@ const AuthedViewNoteIdRoute = AuthedViewNoteIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
   '/create': typeof AuthedCreateRoute
+  '/sign-in': typeof GuestSignInRoute
+  '/sign-up': typeof GuestSignUpRoute
   '/edit/$noteId': typeof AuthedEditNoteIdRoute
   '/view/$noteId': typeof AuthedViewNoteIdRoute
 }
 export interface FileRoutesByTo {
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
-  '/create': typeof AuthedCreateRoute
   '/': typeof AuthedIndexRoute
+  '/create': typeof AuthedCreateRoute
+  '/sign-in': typeof GuestSignInRoute
+  '/sign-up': typeof GuestSignUpRoute
   '/edit/$noteId': typeof AuthedEditNoteIdRoute
   '/view/$noteId': typeof AuthedViewNoteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteRouteWithChildren
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
+  '/_guest': typeof GuestRouteRouteWithChildren
   '/_authed/create': typeof AuthedCreateRoute
+  '/_guest/sign-in': typeof GuestSignInRoute
+  '/_guest/sign-up': typeof GuestSignUpRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/edit/$noteId': typeof AuthedEditNoteIdRoute
   '/_authed/view/$noteId': typeof AuthedViewNoteIdRoute
@@ -82,25 +88,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/create'
     | '/sign-in'
     | '/sign-up'
-    | '/create'
     | '/edit/$noteId'
     | '/view/$noteId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
+    | '/create'
     | '/sign-in'
     | '/sign-up'
-    | '/create'
-    | '/'
     | '/edit/$noteId'
     | '/view/$noteId'
   id:
     | '__root__'
     | '/_authed'
-    | '/sign-in'
-    | '/sign-up'
+    | '/_guest'
     | '/_authed/create'
+    | '/_guest/sign-in'
+    | '/_guest/sign-up'
     | '/_authed/'
     | '/_authed/edit/$noteId'
     | '/_authed/view/$noteId'
@@ -108,8 +115,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
-  SignInRoute: typeof SignInRoute
-  SignUpRoute: typeof SignUpRoute
+  GuestRouteRoute: typeof GuestRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -121,18 +127,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-up': {
-      id: '/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof SignUpRouteImport
+    '/_guest': {
+      id: '/_guest'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof GuestRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed/': {
@@ -148,6 +147,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/create'
       preLoaderRoute: typeof AuthedCreateRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_guest/sign-in': {
+      id: '/_guest/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof GuestSignInRouteImport
+      parentRoute: typeof GuestRouteRoute
+    }
+    '/_guest/sign-up': {
+      id: '/_guest/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof GuestSignUpRouteImport
+      parentRoute: typeof GuestRouteRoute
     }
     '/_authed/edit/$noteId': {
       id: '/_authed/edit/$noteId'
@@ -184,10 +197,23 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
   AuthedRouteRouteChildren,
 )
 
+interface GuestRouteRouteChildren {
+  GuestSignInRoute: typeof GuestSignInRoute
+  GuestSignUpRoute: typeof GuestSignUpRoute
+}
+
+const GuestRouteRouteChildren: GuestRouteRouteChildren = {
+  GuestSignInRoute: GuestSignInRoute,
+  GuestSignUpRoute: GuestSignUpRoute,
+}
+
+const GuestRouteRouteWithChildren = GuestRouteRoute._addFileChildren(
+  GuestRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthedRouteRoute: AuthedRouteRouteWithChildren,
-  SignInRoute: SignInRoute,
-  SignUpRoute: SignUpRoute,
+  GuestRouteRoute: GuestRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

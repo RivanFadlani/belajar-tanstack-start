@@ -35,7 +35,7 @@ const sigIn = createServerFn({ method: 'POST' })
     })
   })
 
-export const Route = createFileRoute('/sign-in')({
+export const Route = createFileRoute('/_guest/sign-in')({
   component: RouteComponent,
 })
 
